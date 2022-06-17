@@ -47,10 +47,13 @@ def adding_to_db(encrypted, deciphered):
 
 @views.route('/api_send/', methods=['POST'])
 def send_to_github():
-    name = request.form['name']
-    repo_url = request.form['repo_url']
-    dec_data = [str(item.decrypted_text[1:-1]) for item in Qummy.query.all()]
-    data = json.dumps({"name": name, "repo_url": repo_url, "result": dec_data},
-                      sort_keys=False, indent=4, ensure_ascii=False)
-    requests.post(url_send, json=data)
-
+    try:
+        name = request.form['name']
+        repo_url = request.form['repo_url']
+        dec_data = [str(item.decrypted_text[1:-1]) for item in Qummy.query.all()]
+        data = json.dumps({"name": name, "repo_url": repo_url, "result": dec_data},
+                          sort_keys=False, indent=4, ensure_ascii=False)
+        requests.post(url_send, json=data)
+    except:
+        flash("Данные не отправлены")
+    return redirect(url_for('views.index'))
