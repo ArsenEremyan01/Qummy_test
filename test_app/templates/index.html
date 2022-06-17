@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %} Qummy {% endblock %}
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col md-12">
+            <div class="jumbotron bg-dark text-white">
+                <form action="{{ url_for('views.get_data') }}" method="POST">
+                    <button type="submit" class="btn btn-primary">Получить данные</button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal">Открыть окно
+                        с отправкой
+                    </button>
+                </form>
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-success alert-dismissable" role="alert">
+                    {{message}}
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+                <table class="table table-hover table-dark">
+                    <tr>
+                        <th>id</th>
+                        <th>Зашифрованный текст</th>
+                        <th>Расшифрованный текст</th>
+                        <th>Дата создания</th>
+                    </tr>
+                    {% for row in data %}
+                    <tr>
+                        <td>{{row.id_data}}</td>
+                        <td><abbr title="{{row.encrypted_text}}" class="initialism">{{row.encrypted_text[:25]}}</abbr>
+                        </td>
+                        <td>{{row.decrypted_text}}</td>
+                        <td>{{row.created_at}}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <div class="modal fade" id="modal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-body">
+                                <form action="{{ url_for('views.send_to_github')  }}" method="POST">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Имя"
+                                               name="name" required="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" placeholder="Ссылка на репозиторий"
+                                               name="repo_url" required="1">
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-primary" type="submit">Отправить</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
